@@ -83,7 +83,7 @@ declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 		connection(): StompConnectionContract
 
 		/**
-		 * Returns the healthcheck report
+		 * Returns the health check report
 		 */
 		report(): Promise<HealthReportEntry & { meta: HealthReportNode[] }>
 
@@ -139,7 +139,7 @@ declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 	 */
 	export interface StompConfig {
 		connection: string
-		connections: { [P in keyof StompConnectionsList]: StompConnectionsList[P] }
+		connections: { [P: string]: StompConnectionsList }
 	}
 
 	/**

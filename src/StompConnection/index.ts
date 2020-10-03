@@ -4,7 +4,7 @@ import { StompConnectionConfig, StompConnectionContract } from '@ioc:Gaurav/Adon
 import { IocContract } from '@adonisjs/fold'
 
 interface StompConfig extends StompConnectionConfig {
-	brokerURL: string
+	brokerURL?: string
 }
 
 export class StompConnection

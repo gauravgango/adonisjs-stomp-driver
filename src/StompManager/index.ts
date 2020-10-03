@@ -9,6 +9,7 @@ import {
 	StompBaseManagerContract,
 	StompConnectionContract,
 	StompConfig,
+	StompConnectionConfig,
 } from '@ioc:Gaurav/Adonis/Addons/Stomp'
 
 import { StompConnection } from '../StompConnection'
@@ -85,7 +86,7 @@ export class StompManager implements StompBaseManagerContract {
 	/**
 	 * Returns config for a given connection
 	 */
-	private getConnectionConfig(name: string) {
+	private getConnectionConfig(name: string): StompConnectionConfig {
 		return this.config.connections[name]
 	}
 
