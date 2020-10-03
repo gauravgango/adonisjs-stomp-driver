@@ -1,10 +1,9 @@
 {
 	"extends": "./node_modules/@adonisjs/mrm-preset/_tsconfig",
 	"compilerOptions": {
-		"esModuleInterop": true,
+		"esModuleInterop": true
 	},
 	"files": [
-		"./node_modules/@adonisjs/core/build/adonis-typings/index.d.ts",
-		"adonis-typings/nodejs.ts"
+		"./node_modules/@adonisjs/core/build/adonis-typings/index.d.ts"
 	]
 }

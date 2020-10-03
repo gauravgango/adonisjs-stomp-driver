@@ -37,7 +37,7 @@ const stompConfig: StompConfig = {
     */
     local: {
       host: Env.get('STOMP_HOST', '127.0.0.1') as string,
-      port: Env.get('STOMP_PORT', '6379') as string,
+      port: Env.get('STOMP_PORT', '61616') as string,
     },
   },
 }

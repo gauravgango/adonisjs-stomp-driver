@@ -131,7 +131,7 @@ declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 	 * A list of typed connections defined in the user land using
 	 * the contracts file
 	 */
-	export interface StompConnectionsList {}
+	export interface StompConnectionsList extends StompConnectionConfig {}
 
 	/**
 	 * Define the config properties on this interface and they will appear
