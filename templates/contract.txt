@@ -6,6 +6,6 @@
 
 declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
   interface StompConnectionsList {
-    local: StompConnectionConfig,
+    [key as string]: StompConnectionConfig,
   }
 }

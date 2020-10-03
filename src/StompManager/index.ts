@@ -9,7 +9,7 @@ import {
 	StompBaseManagerContract,
 	StompConfig,
 	StompConnectionConfig,
-	StompConnectionsList,
+	StompConnectionContract,
 } from '@ioc:Gaurav/Adonis/Addons/Stomp'
 
 import { StompConnection } from '../StompConnection'
@@ -28,7 +28,7 @@ export class StompManager implements StompBaseManagerContract {
 	 * A copy of live connections. We avoid re-creating a new connection
 	 * everytime and re-use connections.
 	 */
-	public activeConnections: keyof StompConnectionsList
+	public activeConnections: { [key: string]: StompConnectionContract } = {}
 
 	/**
 	 * A boolean to know whether health checks have been enabled on one
@@ -68,7 +68,7 @@ export class StompManager implements StompBaseManagerContract {
 	/**
 	 * Returns default connection name
 	 */
-	private getDefaultConnection(): keyof StompConnectionsList {
+	private getDefaultConnectionName() {
 		return this.config.connection
 	}
 
@@ -76,26 +76,26 @@ export class StompManager implements StompBaseManagerContract {
 	 * Returns an existing connection using it's name or the
 	 * default connection,
 	 */
-	private getExistingConnection(name?: keyof StompConnectionsList) {
-		name = name || this.getDefaultConnection()
+	private getExistingConnection(name?: string) {
+		name = name || this.getDefaultConnectionName()
 		return this.activeConnections[name]
 	}
 
 	/**
 	 * Returns config for a given connection
 	 */
-	private getConnectionConfig(name: keyof StompConnectionsList): StompConnectionConfig {
+	private getConnectionConfig(name: string): StompConnectionConfig {
 		return this.config.connections[name]
 	}
 
 	/**
 	 * Returns stomp factory for a given named connection
 	 */
-	public connection(name?: keyof StompConnectionsList): any {
+	public connection(name?: string): any {
 		/**
 		 * Using default connection name when actual name is missing
 		 */
-		name = name || this.getDefaultConnection()
+		name = name || this.getDefaultConnectionName()
 
 		/**
 		 * Return cached connection
@@ -118,7 +118,7 @@ export class StompManager implements StompBaseManagerContract {
 		 * object, so that we can re-use it later
 		 */
 		const connection = (this.activeConnections[name] = new StompConnection(
-			name as string,
+			name,
 			config,
 			this.container
 		))
@@ -128,18 +128,50 @@ export class StompManager implements StompBaseManagerContract {
 		 */
 		connection.on('end', ($connection) => {
 			delete this.activeConnections[$connection.connectionName]
-			this.emitter.emit('adonis:redis:end', {})
+			this.emitter.emit('adonis:redis:end', { connection: $connection })
 		})
 
 		/**
 		 * Forward ready event
 		 */
-		connection.on('ready', () => this.emitter.emit('adonis:redis:ready', {}))
+		connection.on('connected', ($connection) =>
+			this.emitter.emit('adonis:stomp:connected', { connection: $connection })
+		)
 
 		/**
 		 * Forward error event
 		 */
-		connection.on('error', () => this.emitter.emit('adonis:redis:error', {}))
+		connection.on('error', ($connection, error) =>
+			this.emitter.emit('adonis:stomp:error', { connection: $connection, error })
+		)
+
+		/**
+		 * Forward error event
+		 */
+		connection.on('disconnected', ($connection, error) =>
+			this.emitter.emit('adonis:stomp:end', { connection: $connection, error })
+		)
+
+		/**
+		 * Forward error event
+		 */
+		connection.on('force-disconnected', ($connection, error) =>
+			this.emitter.emit('adonis:stomp:end', { connection: $connection, error })
+		)
+
+		/**
+		 * Subscriber connected
+		 */
+		connection.on('subscription:connected', ($connection, worker) =>
+			this.emitter.emit('adonis:stomp:subscriber:connected', { connection: $connection, worker })
+		)
+
+		/**
+		 * Subscriber connected
+		 */
+		connection.on('subscription:disconnected', ($connection, worker) =>
+			this.emitter.emit('adonis:stomp:subscriber:disconnected', { connection: $connection, worker })
+		)
 
 		/**
 		 * Return connection

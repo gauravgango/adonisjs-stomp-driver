@@ -16,7 +16,7 @@ import { IocContract, IocResolverContract } from '@adonisjs/fold'
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000))
 
 export abstract class AbstractConnection<
-	T extends Client,
+	T extends Client = Client,
 	U extends StompSubscription = StompSubscription
 > extends EventEmitter {
 	/**
@@ -69,7 +69,6 @@ export abstract class AbstractConnection<
 	) {
 		super()
 		this.resolver = container.getResolver(undefined, 'stompListeners', 'App/Listeners')
-		this.proxyConnectionEvents()
 	}
 
 	/**
@@ -90,14 +89,13 @@ export abstract class AbstractConnection<
 
 		this.ioConnection.onStompError = (error) => {
 			this.lastError = error
-			this.emit('error', error, this)
+			this.emit('error', this, error)
 		}
 
 		/**
 		 * On end, we must cleanup client and self listeners
 		 */
 		this.ioConnection.onDisconnect = async () => {
-			// this.ioConnection.removeAllListeners()
 			this.emit('end', this)
 			this.removeAllListeners()
 		}
@@ -109,9 +107,10 @@ export abstract class AbstractConnection<
 	 * Gracefully end the stomp connection
 	 */
 	public async quit() {
-		this.subscriptions.forEach((subscriptions) =>
-			subscriptions.forEach((subscription) => subscription.unsubscribe())
-		)
+		for (const [subscriptionName] of this.subscriptions.entries()) {
+			this.unsubscribe(subscriptionName)
+		}
+		await this.emit('disconnected', this)
 		await this.ioConnection.deactivate()
 	}
 
@@ -120,6 +119,7 @@ export abstract class AbstractConnection<
 	 */
 	public async disconnect() {
 		await this.ioConnection.forceDisconnect()
+		this.emit('force-disconnected', this)
 		await this.quit()
 	}
 
@@ -163,7 +163,7 @@ export abstract class AbstractConnection<
 				},
 				{ ack: 'client' }
 			)
-			this.emit('subscription:connected', this)
+			this.emit('subscription:connected', this, worker)
 			subscriptions.push(subscription)
 		}
 		this.subscriptions.set(channel, subscriptions as U[])
@@ -173,7 +173,10 @@ export abstract class AbstractConnection<
 	 * Unsubscribe from a channel
 	 */
 	public unsubscribe(channel: string) {
-		this.subscriptions.get(channel)?.forEach((subscription) => subscription.unsubscribe())
+		this.subscriptions.get(channel)?.forEach((subscription, index) => {
+			subscription.unsubscribe()
+			this.emit('subscription:disconnected', this, index + 1)
+		})
 		this.subscriptions.delete(channel)
 	}
 
@@ -200,5 +203,15 @@ export abstract class AbstractConnection<
 			connected: connection.connected,
 			error: this.lastError,
 		}
+	}
+
+	/**
+	 * Publish message on channel
+	 */
+	public publish(destination: string, data: any): void {
+		return this.ioConnection.publish({
+			destination,
+			body: JSON.stringify(data),
+		})
 	}
 }

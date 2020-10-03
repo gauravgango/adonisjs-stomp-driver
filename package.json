@@ -1,6 +1,6 @@
 {
 	"name": "@gauravgango/adonisjs-stomp-driver",
-	"version": "1.0.0-beta.10",
+	"version": "1.0.0-beta.11",
 	"description": "Stomp Protocol Driver to handle queue and pub/sub",
 	"main": "build/providers/StompProvider.js",
 	"files": [

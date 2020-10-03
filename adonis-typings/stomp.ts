@@ -7,12 +7,6 @@ declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 	} from '@stomp/stompjs/bundles/stomp.umd'
 	import { EventEmitter } from 'events'
 
-	type GetConnectionFactoryType<
-		T extends keyof StompConnectionsList
-	> = StompConnectionsList[T] extends StompConnectionConfig
-		? StompConnectionContract
-		: StompConnectionContract
-
 	/**
 	 * Pubsub subscriber
 	 */
@@ -25,6 +19,8 @@ declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 		subscribe(channel: string, handler: PubSubChannelHandler | string): void
 
 		unsubscribe(channel: string): void
+
+		publish(channel: string, data: any): void
 	}
 
 	/**
@@ -63,17 +59,10 @@ declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 		 * Number of active stomp connection.
 		 */
 		activeConnectionsCount: number
-		activeConnections: keyof StompConnectionsList
+		activeConnections: { [key: string]: StompConnectionContract }
 
 		/**
 		 * Fetch a named connection from the defined config inside config/redis file
-		 */
-		connection<Connection extends keyof StompConnectionsList>(
-			name: Connection
-		): GetConnectionFactoryType<Connection>
-
-		/**
-		 * Untyped connection
 		 */
 		connection(name: string): StompConnectionContract
 
@@ -131,17 +120,15 @@ declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 	 * A list of typed connections defined in the user land using
 	 * the contracts file
 	 */
-	export interface StompConnectionsList {
-		[key: string]: StompConnectionConfig
-	}
+	export interface StompConnectionsList extends StompConnectionConfig {}
 
 	/**
 	 * Define the config properties on this interface and they will appear
 	 * everywhere.
 	 */
 	export interface StompConfig {
-		connection: keyof StompConnectionsList
-		connections: { [P in keyof StompConnectionsList]: StompConnectionsList[P] }
+		connection: string
+		connections: { [key: string]: StompConnectionsList }
 	}
 
 	/**

@@ -17,8 +17,8 @@ export class StompConnection
 	) {
 		super(connectionName, config, container)
 
-		// @Todo handle ssl connection
 		this.config.brokerURL = `tcp://${this.config.host}:${this.config.port}`
 		this.ioConnection = new Client(this.config)
+		this.proxyConnectionEvents()
 	}
 }
