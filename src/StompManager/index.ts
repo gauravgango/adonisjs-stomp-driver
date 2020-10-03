@@ -7,9 +7,9 @@ import { Exception, ManagerConfigValidator } from '@poppinss/utils'
 import {
 	HealthReportNode,
 	StompBaseManagerContract,
-	StompConnectionContract,
 	StompConfig,
 	StompConnectionConfig,
+	StompConnectionsList,
 } from '@ioc:Gaurav/Adonis/Addons/Stomp'
 
 import { StompConnection } from '../StompConnection'
@@ -28,9 +28,7 @@ export class StompManager implements StompBaseManagerContract {
 	 * A copy of live connections. We avoid re-creating a new connection
 	 * everytime and re-use connections.
 	 */
-	public activeConnections: {
-		[key: string]: StompConnectionContract
-	} = {}
+	public activeConnections: keyof StompConnectionsList
 
 	/**
 	 * A boolean to know whether health checks have been enabled on one
@@ -70,7 +68,7 @@ export class StompManager implements StompBaseManagerContract {
 	/**
 	 * Returns default connection name
 	 */
-	private getDefaultConnection(): string {
+	private getDefaultConnection(): keyof StompConnectionsList {
 		return this.config.connection
 	}
 
@@ -78,7 +76,7 @@ export class StompManager implements StompBaseManagerContract {
 	 * Returns an existing connection using it's name or the
 	 * default connection,
 	 */
-	private getExistingConnection(name?: string) {
+	private getExistingConnection(name?: keyof StompConnectionsList) {
 		name = name || this.getDefaultConnection()
 		return this.activeConnections[name]
 	}
@@ -86,14 +84,14 @@ export class StompManager implements StompBaseManagerContract {
 	/**
 	 * Returns config for a given connection
 	 */
-	private getConnectionConfig(name: string): StompConnectionConfig {
+	private getConnectionConfig(name: keyof StompConnectionsList): StompConnectionConfig {
 		return this.config.connections[name]
 	}
 
 	/**
 	 * Returns stomp factory for a given named connection
 	 */
-	public connection(name?: string): any {
+	public connection(name?: keyof StompConnectionsList): any {
 		/**
 		 * Using default connection name when actual name is missing
 		 */
@@ -120,7 +118,7 @@ export class StompManager implements StompBaseManagerContract {
 		 * object, so that we can re-use it later
 		 */
 		const connection = (this.activeConnections[name] = new StompConnection(
-			name,
+			name as string,
 			config,
 			this.container
 		))
@@ -130,22 +128,18 @@ export class StompManager implements StompBaseManagerContract {
 		 */
 		connection.on('end', ($connection) => {
 			delete this.activeConnections[$connection.connectionName]
-			this.emitter.emit('adonis:redis:end', { connection: $connection })
+			this.emitter.emit('adonis:redis:end', {})
 		})
 
 		/**
 		 * Forward ready event
 		 */
-		connection.on('ready', ($connection) =>
-			this.emitter.emit('adonis:redis:ready', { connection: $connection })
-		)
+		connection.on('ready', () => this.emitter.emit('adonis:redis:ready', {}))
 
 		/**
 		 * Forward error event
 		 */
-		connection.on('error', (error, $connection) =>
-			this.emitter.emit('adonis:redis:error', { error, connection: $connection })
-		)
+		connection.on('error', () => this.emitter.emit('adonis:redis:error', {}))
 
 		/**
 		 * Return connection

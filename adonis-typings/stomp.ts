@@ -63,7 +63,7 @@ declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 		 * Number of active stomp connection.
 		 */
 		activeConnectionsCount: number
-		activeConnections: { [key: string]: StompConnectionContract }
+		activeConnections: keyof StompConnectionsList
 
 		/**
 		 * Fetch a named connection from the defined config inside config/redis file
@@ -131,15 +131,17 @@ declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 	 * A list of typed connections defined in the user land using
 	 * the contracts file
 	 */
-	export interface StompConnectionsList extends StompConnectionConfig {}
+	export interface StompConnectionsList {
+		[key: string]: StompConnectionConfig
+	}
 
 	/**
 	 * Define the config properties on this interface and they will appear
 	 * everywhere.
 	 */
 	export interface StompConfig {
-		connection: string
-		connections: { [P: string]: StompConnectionsList }
+		connection: keyof StompConnectionsList
+		connections: { [P in keyof StompConnectionsList]: StompConnectionsList[P] }
 	}
 
 	/**
