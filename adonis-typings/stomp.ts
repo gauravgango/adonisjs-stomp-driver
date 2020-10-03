@@ -4,7 +4,7 @@ declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 		Client,
 		messageCallbackType,
 		StompConfig as StompClientConfig,
-	} from '@stomp/stompjs/esm6'
+	} from '@stomp/stompjs/bundles/stomp.umd'
 	import { EventEmitter } from 'events'
 
 	type GetConnectionFactoryType<
@@ -138,7 +138,7 @@ declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 	 * everywhere.
 	 */
 	export interface StompConfig {
-		connection: keyof StompConnectionsList
+		connection: string
 		connections: { [P in keyof StompConnectionsList]: StompConnectionsList[P] }
 	}
 

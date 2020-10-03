@@ -5,7 +5,7 @@ import {
 	PubSubChannelHandler,
 	StompConnectionConfig,
 } from '@ioc:Gaurav/Adonis/Addons/Stomp'
-import { Client, messageCallbackType, StompSubscription } from '@stomp/stompjs/esm6'
+import { Client, messageCallbackType, StompSubscription } from '@stomp/stompjs/bundles/stomp.umd'
 import { EventEmitter } from 'events'
 import { Exception } from '@poppinss/utils'
 import { IocContract, IocResolverContract } from '@adonisjs/fold'

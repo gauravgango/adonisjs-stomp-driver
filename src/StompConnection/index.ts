@@ -1,5 +1,5 @@
 import { AbstractConnection } from '../AbstractConnection'
-import { Client, StompSubscription } from '@stomp/stompjs/esm6'
+import { Client, StompSubscription } from '@stomp/stompjs/bundles/stomp.umd'
 import { StompConnectionConfig, StompConnectionContract } from '@ioc:Gaurav/Adonis/Addons/Stomp'
 import { IocContract } from '@adonisjs/fold'
 
