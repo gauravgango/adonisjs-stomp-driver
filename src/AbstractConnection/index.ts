@@ -69,6 +69,7 @@ export abstract class AbstractConnection<
 	) {
 		super()
 		this.resolver = container.getResolver(undefined, 'stompListeners', 'App/Listeners')
+		this.proxyConnectionEvents()
 	}
 
 	/**
