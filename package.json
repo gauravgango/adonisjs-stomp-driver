@@ -1,6 +1,6 @@
 {
   "name": "@gauravgango/adonisjs-stomp-driver",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "Stomp Protocol Driver to handle queue and pub/sub",
   "main": "build/providers/StompProvider.js",
 	"files": [
@@ -63,9 +63,9 @@
 				}
 			]
 		},
-		"types": "@adonisjs/stomp",
+		"types": "@gauravgango/adonisjs-stomp-driver",
 		"providers": [
-			"@adonisjs/stomp"
+			"@gauravgango/adonisjs-stomp-driver"
 		],
 		"env": {
 			"STOMP_CONNECTION": "local",
