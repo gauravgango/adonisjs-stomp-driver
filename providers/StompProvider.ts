@@ -1,13 +1,13 @@
-// import { w3cwebsocket } from 'websocket'
+import { w3cwebsocket } from 'websocket'
 import { IocContract } from '@adonisjs/fold'
 import { StompManagerContract } from '@ioc:Gaurav/Adonis/Addons/Stomp'
 
-// Object.assign(global, { WebSocket: w3cwebsocket })
+Object.assign(global, { WebSocket: w3cwebsocket })
 
 /**
  * Provider to bind redis to the container
  */
-export default class StompQueueProvider {
+export default class StompProvider {
 	constructor(protected container: IocContract) {}
 
 	/**
