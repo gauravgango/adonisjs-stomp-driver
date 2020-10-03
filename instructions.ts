@@ -28,15 +28,6 @@ export default async function instructions(
 	sink.logger.create(`${configDir}/stomp.ts`)
 
 	/**
-	 * Create Contract file
-	 */
-	const contractPath = app.makePath('contracts/stomp.ts')
-	new sink.files.MustacheFile(projectRoot, contractPath, getStub('contract.txt'))
-
-	const contractDir = app.directoriesMap.get('contracts') || 'contracts'
-	sink.logger.create(`${contractDir}/stomp.ts`)
-
-	/**
 	 * Setup .env file
 	 */
 	const env = new sink.files.EnvFile(projectRoot)

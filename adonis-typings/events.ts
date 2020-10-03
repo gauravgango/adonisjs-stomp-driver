@@ -1,5 +1,5 @@
 declare module '@ioc:Adonis/Core/Event' {
-	import { StompConnectionContract } from '@ioc:Gaurav/Adonis/Addons/Stomp';
+	import { StompConnectionContract } from '@ioc:Gaurav/Adonis/Addons/Stomp'
 
 	interface EventList {
 		'adonis:stomp:connected': { connection: StompConnectionContract }

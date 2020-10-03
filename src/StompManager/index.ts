@@ -6,10 +6,11 @@ import { Exception, ManagerConfigValidator } from '@poppinss/utils'
 
 import {
 	HealthReportNode,
-	StompBaseManagerContract,
+	PubSubChannelHandler,
 	StompConfig,
 	StompConnectionConfig,
 	StompConnectionContract,
+	StompManagerContract,
 } from '@ioc:Gaurav/Adonis/Addons/Stomp'
 
 import { StompConnection } from '../StompConnection'
@@ -17,7 +18,7 @@ import { StompConnection } from '../StompConnection'
 /**
  * Stomp manager exposes the API to interact with a stomp server.
  */
-export class StompManager implements StompBaseManagerContract {
+export class StompManager implements StompManagerContract {
 	/**
 	 * An array of connections with health checks enabled, which means, we always
 	 * create a connection for them, even when they are not used.
@@ -240,5 +241,34 @@ export class StompManager implements StompBaseManagerContract {
 			},
 			meta: reports,
 		}
+	}
+
+	/**
+	 * Publish message
+	 * @param channel
+	 * @param data
+	 * @param name
+	 */
+	public publish(channel: string, data: any, name?: string) {
+		this.getExistingConnection(name).publish(channel, data)
+	}
+
+	/**
+	 * Subscribe to message
+	 * @param channel
+	 * @param handler
+	 * @param name
+	 */
+	public subscribe(channel: string, handler: PubSubChannelHandler | string, name?: string) {
+		this.getExistingConnection(name).subscribe(channel, handler)
+	}
+
+	/**
+	 * Unsubscribe to channel
+	 * @param channel
+	 * @param name
+	 */
+	public unsubscribe(channel: string, name?: string) {
+		this.getExistingConnection(name).unsubscribe(channel)
 	}
 }
