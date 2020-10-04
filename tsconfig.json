@@ -6,5 +6,6 @@
 	},
 	"files": [
 		"./node_modules/@adonisjs/core/build/adonis-typings/index.d.ts"
-	]
+	],
+	"exclude": ["./ignored/**/*"]
 }

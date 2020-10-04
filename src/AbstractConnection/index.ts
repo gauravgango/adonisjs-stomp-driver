@@ -68,7 +68,8 @@ export abstract class AbstractConnection<
 		container: IocContract
 	) {
 		super()
-		this.resolver = container.getResolver(undefined, 'stompListeners', 'App/Listeners')
+		console.log(container)
+		// this.resolver = container.getResolver(undefined, 'stompListeners', 'App/Listeners')
 	}
 
 	/**
@@ -78,6 +79,7 @@ export abstract class AbstractConnection<
 	 * event on the actual connection and then remove listeners.
 	 */
 	protected proxyConnectionEvents() {
+		console.log('starting connection')
 		this.ioConnection.onConnect = () => {
 			/**
 			 * We must set the error to null when server is ready for accept
@@ -147,7 +149,7 @@ export abstract class AbstractConnection<
 		const connection = this.ioConnection
 		const subscriptions: StompSubscription[] = []
 
-		for (let worker = 1; worker >= (this.config.workers || 1); worker++) {
+		for (let worker = 1; worker <= (this.config.workers || 1); worker++) {
 			const subscription = connection.subscribe(
 				channel,
 				(message) => {

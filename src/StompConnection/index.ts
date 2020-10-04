@@ -2,7 +2,7 @@ import { AbstractConnection } from '../AbstractConnection'
 import { StompConnectionConfig, StompConnectionContract } from '@ioc:Gaurav/Adonis/Addons/Stomp'
 import { IocContract } from '@adonisjs/fold'
 const Stomp = require('@stomp/stompjs')
-
+Object.assign(global, { WebSocket: require('websocket').w3cwebsocket });
 interface StompConfig extends StompConnectionConfig {
 	brokerURL?: string
 }
