@@ -68,8 +68,7 @@ export abstract class AbstractConnection<
 		container: IocContract
 	) {
 		super()
-		console.log(container)
-		// this.resolver = container.getResolver(undefined, 'stompListeners', 'App/Listeners')
+		this.resolver = container.getResolver(undefined, 'stompListeners', 'App/Listeners')
 	}
 
 	/**
