@@ -1,15 +1,13 @@
 import { AbstractConnection } from '../AbstractConnection'
-import { Client, StompSubscription } from '@stomp/stompjs/bundles/stomp.umd'
 import { StompConnectionConfig, StompConnectionContract } from '@ioc:Gaurav/Adonis/Addons/Stomp'
 import { IocContract } from '@adonisjs/fold'
+const Stomp = require('@stomp/stompjs')
 
 interface StompConfig extends StompConnectionConfig {
 	brokerURL?: string
 }
 
-export class StompConnection
-	extends AbstractConnection<Client, StompSubscription>
-	implements StompConnectionContract {
+export class StompConnection extends AbstractConnection implements StompConnectionContract {
 	constructor(
 		public connectionName: string,
 		protected config: StompConfig,
@@ -18,7 +16,7 @@ export class StompConnection
 		super(connectionName, config, container)
 
 		this.config.brokerURL = `tcp://${this.config.host}:${this.config.port}`
-		this.ioConnection = new Client(this.config)
+		this.ioConnection = new Stomp.Client(this.config)
 		this.proxyConnectionEvents()
 	}
 }

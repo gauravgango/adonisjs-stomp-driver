@@ -250,7 +250,7 @@ export class StompManager implements StompManagerContract {
 	 * @param name
 	 */
 	public publish(channel: string, data: any, name?: string) {
-		this.getExistingConnection(name).publish(channel, data)
+		this.connection(name).publish(channel, data)
 	}
 
 	/**
@@ -260,7 +260,7 @@ export class StompManager implements StompManagerContract {
 	 * @param name
 	 */
 	public subscribe(channel: string, handler: PubSubChannelHandler | string, name?: string) {
-		this.getExistingConnection(name).subscribe(channel, handler)
+		this.connection(name).subscribe(channel, handler)
 	}
 
 	/**
@@ -269,6 +269,6 @@ export class StompManager implements StompManagerContract {
 	 * @param name
 	 */
 	public unsubscribe(channel: string, name?: string) {
-		this.getExistingConnection(name).unsubscribe(channel)
+		this.connection(name).unsubscribe(channel)
 	}
 }

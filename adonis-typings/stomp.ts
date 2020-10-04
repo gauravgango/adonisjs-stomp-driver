@@ -1,10 +1,6 @@
 declare module '@ioc:Gaurav/Adonis/Addons/Stomp' {
 	import { HealthReportEntry } from '@ioc:Adonis/Core/HealthCheck'
-	import {
-		Client,
-		messageCallbackType,
-		StompConfig as StompClientConfig,
-	} from '@stomp/stompjs/bundles/stomp.umd'
+	import { Client, messageCallbackType, StompConfig as StompClientConfig } from '@stomp/stompjs'
 	import { EventEmitter } from 'events'
 
 	/**
